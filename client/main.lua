@@ -1,8 +1,6 @@
 local paycheckdata
 ESX = nil
 
-
-
 Citizen.CreateThread(function()
 	while ESX == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
@@ -12,26 +10,46 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-	local PedsTarget = {}
-	for k,v in pairs (Config.NPCS) do
-		PedsTarget = {v.model}
-	end
-	exports[Config.Target]:AddTargetModel(PedsTarget, {
-		options = {
-			{
-				event = "dx-paycheck:Menu",
-				icon = "fas fa-car",
-				label = "Collect salary",
-			},
-			
-		},
-		job = {"all"},
-		distance = 3.5
+	local model GetEntityModel(PlayerPedId())
+
+	exports["fivem-target"]:AddTargetModel({
+  		name = "payroll",
+  		label = "Payroll",
+  		icon = "fas fa-car",
+  		model = GetHashKey('cs_bankman'),
+  		interactDist = 2.0,
+  		onInteract = payCheck,
+  		options = {
+		{
+	  		name = "paycheck",
+	  		label = "PayCheck"
+		}
+  	  },
+  		vars = {}
 	})
 end)
 
+payCheck = function(targetName,optionName,vars,entityHit)
+	if optionName == "paycheck" then
+		OpenPaycheckMenu()
+	end
+end
 
-
+Citizen.CreateThread(function()
+	if Config.BlipActive then
+		for k,v in ipairs(Config.BlipCoords) do
+		local blip = AddBlipForCoord(v.x, v.y, v.z)
+		SetBlipSprite(blip, Config.BlipID)
+		SetBlipDisplay(blip, 4)
+		SetBlipScale(blip, 0.5)
+		SetBlipColour(blip, 2)
+		SetBlipAsShortRange(blip, true)
+		BeginTextCommandSetBlipName("STRING")
+		AddTextComponentString(Config.BlipName)
+		EndTextCommandSetBlipName(blip)
+		end
+	end
+end)
 
 Citizen.CreateThread(function()
 	Citizen.Wait(100)
@@ -44,7 +62,6 @@ Citizen.CreateThread(function()
 		ped = CreatingPed(v.model, v.coords, v.heading, v.animDict, v.animName)
 	end
 end)
-
 
 function CreatingPed(hash, coords, heading, animDict, animName)
     RequestModel(GetHashKey(hash))
@@ -70,77 +87,62 @@ function CreatingPed(hash, coords, heading, animDict, animName)
     return ped
 end
 
+function OpenPaycheckMenu()
+	local paycheckMenu = {
+        {
+            id = 1,
+            header = Config.Header,
+            txt = Config.Text 
+        },
+        {
+            id = 2,
+            header = Config.WithdrawAll,
+            txt = Config.WithdrawText,
+            params = {
+                event = 'dx-paycheck:withdrawAll',
+            }
+        },
+		{
+            id = 3,
+            header = Config.EnterAmount,
+            txt = Config.AmountText,
+            params = {
+                event = 'dx-paycheck:enterAmount',
+            }
+        },
+    }
+    exports['zf_context']:openMenu(paycheckMenu)
+end
 
-RegisterNetEvent('dx-paycheck:Menu')
-AddEventHandler('dx-paycheck:Menu',function()
-	OpenPaycheckMenu()
+RegisterNetEvent('dx-paycheck:withdrawAll')
+AddEventHandler('dx-paycheck:withdrawAll', function()
+	local disableControls = {30,31,32,33,34,35,18}
+		exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls)
+		Citizen.Wait(5000)
+		TriggerServerEvent('dx-paycheck:Payout')
 end)
 
-
-function OpenPaycheckMenu()
-	local elements = {}
-	ESX.TriggerServerCallback('dx-paycheck:server:GetDataMoney', function(count)
-		paycheckdata = json.decode(count)
-		table.insert(elements,{label = '&nbsp;&nbsp;<span style="color:#13ea13 ;"> You have ' ..paycheckdata..'$ to collect</span>'})
-		table.insert(elements,{label = 'Withdraw All', value = 'withdraw_all'})
-		if Config.WithdrawQuantity then
-			table.insert(elements, {label = 'Withdraw an amount', value = 'withdraw_quantity'})
+RegisterNetEvent('dx-paycheck:enterAmount')
+AddEventHandler('dx-paycheck:enterAmount', function()
+	local dialog = exports['zf_dialog']:DialogInput({
+		header = "City Hall", 
+		rows = {
+			{
+				id = 0, 
+				txt = "Enter Amount(#)",
+			},
+		}
+	})
+	
+	if dialog ~= nil then
+		if dialog[1].input == nil then
+				ESX.ShowNotification('Invalid Entry Made.')
+		else
+			local count = tonumber(dialog[1].input)
+			local disableControls = {30,31,32,33,34,35,18}
+				exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls)
+				Citizen.Wait(5000)
+				TriggerServerEvent('dx-paycheck:withdrawMoney', count)
 		end
-		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'paycheck_actions', {
-					title    = 'City Hall',
-					align    = 'center-left',
-					elements = elements
-				}, function(data, menu)
-						if data.current.value == 'withdraw_all' then
-							menu.close()
-							exports.rprogress:Custom({
-								Duration = 5000,
-								Label = "Cashing out...",
-								Animation = {
-									scenario = "WORLD_HUMAN_CLIPBOARD", 
-									animationDictionary = "idle_a", 
-								},
-								DisableControls = {
-									Mouse = false,
-									Player = true,
-									Vehicle = true
-								}
-							})
-							Citizen.Wait(5000)
-							TriggerServerEvent('dx-paycheck:Payout')
-						elseif data.current.value == 'withdraw_quantity'then
-							ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'withdraw_quantity_count', {
-								title = 'Quantity'
-							}, function(data2, menu2)
-								local count = tonumber(data2.value)
-				
-								if count == nil then
-									ESX.ShowNotification('Invalid Quantity')
-								else
-									menu2.close()
-									menu.close()
-									exports.rprogress:Custom({
-										Duration = 5000,
-										Label = "Cashing out...",
-										Animation = {
-											scenario = "WORLD_HUMAN_CLIPBOARD", 
-											animationDictionary = "idle_a", 
-										},
-										DisableControls = {
-											Mouse = false,
-											Player = true,
-											Vehicle = true
-										}
-									})
-									Citizen.Wait(5000)
-									TriggerServerEvent('dx-paycheck:withdrawMoney', count)
-								end
-							end)
-						elseif data.current.value == 'Salir' then
-							menu.close()
-						end
-		end, function(data, menu)
-			menu.close()
-		end)
-	end)
-end
+	end
+end)
