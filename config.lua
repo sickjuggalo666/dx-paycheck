@@ -4,6 +4,14 @@ Config.UseEsExtendedType = true -- IF true, enable the trigger so you can place 
 Config.WithdrawQuantity = true
 Config.Timeout = 5000 -- Timeout for the citizen, briefly, 5 secs.
 Config.Target = 'qtarget' -- Config your exports target (bt-target or qtarget)
+
+Config.Header = "City Hall"
+Config.Text = "Get Paycheck!"
+Config.WithdrawAll = "Withdraw All?"
+Config.WithdrawText = "Collect all the paycheck"
+Config.EnterAmount = "Withdraw Amount?"
+Config.AmountText = "Enter a Select amount"
+
 Config.NPCS =  {
     {
         model = "cs_bankman",

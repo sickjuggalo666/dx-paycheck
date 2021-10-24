@@ -76,71 +76,38 @@ AddEventHandler('dx-paycheck:Menu',function()
 	OpenPaycheckMenu()
 end)
 
-
 function OpenPaycheckMenu()
-	local elements = {}
-	ESX.TriggerServerCallback('dx-paycheck:server:GetDataMoney', function(count)
-		paycheckdata = json.decode(count)
-		table.insert(elements,{label = '&nbsp;&nbsp;<span style="color:#13ea13 ;"> You have ' ..paycheckdata..'$ to collect</span>'})
-		table.insert(elements,{label = 'Withdraw All', value = 'withdraw_all'})
-		if Config.WithdrawQuantity then
-			table.insert(elements, {label = 'Withdraw an amount', value = 'withdraw_quantity'})
-		end
-		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'paycheck_actions', {
-					title    = 'City Hall',
-					align    = 'center-left',
-					elements = elements
-				}, function(data, menu)
-						if data.current.value == 'withdraw_all' then
-							menu.close()
-							exports.rprogress:Custom({
-								Duration = 5000,
-								Label = "Cashing out...",
-								Animation = {
-									scenario = "WORLD_HUMAN_CLIPBOARD", 
-									animationDictionary = "idle_a", 
-								},
-								DisableControls = {
-									Mouse = false,
-									Player = true,
-									Vehicle = true
-								}
-							})
-							Citizen.Wait(5000)
-							TriggerServerEvent('dx-paycheck:Payout')
-						elseif data.current.value == 'withdraw_quantity'then
-							ESX.UI.Menu.Open('dialog', GetCurrentResourceName(), 'withdraw_quantity_count', {
-								title = 'Quantity'
-							}, function(data2, menu2)
-								local count = tonumber(data2.value)
-				
-								if count == nil then
-									ESX.ShowNotification('Invalid Quantity')
-								else
-									menu2.close()
-									menu.close()
-									exports.rprogress:Custom({
-										Duration = 5000,
-										Label = "Cashing out...",
-										Animation = {
-											scenario = "WORLD_HUMAN_CLIPBOARD", 
-											animationDictionary = "idle_a", 
-										},
-										DisableControls = {
-											Mouse = false,
-											Player = true,
-											Vehicle = true
-										}
-									})
-									Citizen.Wait(5000)
-									TriggerServerEvent('dx-paycheck:withdrawMoney', count)
-								end
-							end)
-						elseif data.current.value == 'Salir' then
-							menu.close()
-						end
-		end, function(data, menu)
-			menu.close()
-		end)
-	end)
+		local OpenPaycheckMenu = {
+			{
+            	id = 1,
+            	header = Config.Header,
+            	txt = Config.Text
+        	},
+			{
+				id = 2,
+				header = Config.WithdrawAll,
+				txt = Config.WithdrawText,
+				params = {
+					event = 'JD_Evidence:confirmorcancel',
+					args = {
+						selection = "confirm",
+						inventory = inventoryID
+					}
+				}
+			},
+			{
+				id = 3,
+				header = Config.EnterAmount,
+				txt = Config.AmountText,
+				params = {
+					event = 'JD_Evidence:confirmorcancel',
+					args = {
+						selection = "cancel"
+					}
+				}
+			}
+		}
+
+		exports['zf_context']:openMenu(OpenPaycheckMenu)
+
 end
