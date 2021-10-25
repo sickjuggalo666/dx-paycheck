@@ -41,7 +41,8 @@ added `exports['dx-paycheck']:OpenPaycheckMenu()` to add to any script where you
 
 ## For ES EXTENDED Paychecks! ##
 
-##
+
+
 ESX.StartPayCheck = function()
 	function payCheck()
 		local xPlayers = ESX.GetPlayers()
@@ -91,4 +92,3 @@ ESX.StartPayCheck = function()
 
 	SetTimeout(Config.PaycheckInterval, payCheck)
 end
-##
