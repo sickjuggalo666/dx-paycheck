@@ -19,7 +19,7 @@ if Config.UseEsExtendedType then
 			})
 			end)
 		else 
-			print(('Someone is trying to do something shady. [dx-PAYCHECK]'):format(xPlayer.identifier))
+			print(('Someone is trying to do something shady. [DX-PAYCHECK]'):format(xPlayer.identifier))
 		end
 	end)
 end
@@ -43,7 +43,7 @@ AddEventHandler('dx-paycheck:AddMoney',function(source, value)
 		})
 		end)
 	else 
-		print(('Someone is trying to do something shady. [dx-PAYCHECK]'):format(xPlayer.identifier))
+		print(('Someone is trying to do something shady. [DX-PAYCHECK]'):format(xPlayer.identifier))
 	end
 end)
 
@@ -83,7 +83,7 @@ AddEventHandler('dx-paycheck:withdrawMoney', function(value)
 			end
 		end)
 	else
-		print(('Someone is trying to do something shady. [dx-PAYCHECK]'):format(xPlayer.identifier))
+		print(('Someone is trying to do something shady. [DX-PAYCHECK]'):format(xPlayer.identifier))
 	end
 end)
 
@@ -137,6 +137,6 @@ AddEventHandler("dx-paycheck:Payout", function()
 				end
 		end)
 	else
-		print(('Someone is trying to do something shady. [dx-PAYCHECK]'):format(xPlayer.identifier))
+		print(('Someone is trying to do something shady. [DX-PAYCHECK]'):format(xPlayer.identifier))
 	end
 end)

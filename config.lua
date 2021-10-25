@@ -41,6 +41,7 @@ AddEventHandler('dx-paycheck:notification', function(msg,type)
 --	Types used: (error | success)
 	--exports['mythic_notify']:DoHudText(type,msg)
     -- ESX.ShowNotification(msg)
+    -- exports['dopeNotify3']:Alert("City Hall", msg, 5000, type)
     exports.brinnNotify:SendNotification({                    
         text = '<b><i class="fas fa-bell"></i> NOTIFICACIÓN</span></b></br><span style="color: #a9a29f;">'..msg..'',
         type = type,

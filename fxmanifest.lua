@@ -13,5 +13,5 @@ client_scripts {
 }
 
 exports {
-    'OpenPaycheckMenu()'
+    'OpenPaycheckMenu()' 
 }
