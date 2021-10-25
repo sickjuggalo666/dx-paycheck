@@ -9,14 +9,37 @@ Citizen.CreateThread(function()
     ESXLoaded = true
 end)
 
-Citizen.CreateThread(function()
-	local model GetEntityModel(PlayerPedId())
+--- IF NOT USING BT-TARGET OR QTARGET HASH THIS SECTION and unhash the section after it!
 
-	exports["fivem-target"]:AddTargetModel({
+--[[Citizen.CreateThread(function()
+	local PedsTarget = {}
+	for k,v in pairs (Config.NPCS) do
+		PedsTarget = {v.model}
+	end
+	exports[Config.Target]:AddTargetModel(PedsTarget, {  -- Don't forget to set this in Config.lua
+		options = {
+			{
+				event = "dx-paycheck:Menu",
+				icon = "fas fa-car",
+				label = "Collect salary",
+			},
+			
+		},
+		job = {"all"},
+		distance = 3.5
+	})
+end)]]
+
+		--- FIVEM TARGET HERE!!!! Make sure to hash out this WHOLE section if you wish to use Bt-target or Qtarget!
+
+Citizen.CreateThread(function()				
+	local model GetEntityModel(PlayerPedId())
+											  
+	exports["fivem-target"]:AddTargetModel({   
   		name = "payroll",
   		label = "Payroll",
   		icon = "fas fa-car",
-  		model = GetHashKey('cs_bankman'),
+  		model = GetHashKey('cs_bankman'),  --- currently only allows for the one model.. BUT i am working out ways to pull more than ONE hash!
   		interactDist = 2.0,
   		onInteract = payCheck,
   		options = {
@@ -26,26 +49,31 @@ Citizen.CreateThread(function()
 		}
   	  },
   		vars = {}
-	})
-end)
-
-payCheck = function(targetName,optionName,vars,entityHit)
-	if optionName == "paycheck" then
-		OpenPaycheckMenu()
-	end
+	})														   
+end)														  
+															 
+payCheck = function(optionName,vars)	
+	if optionName == "paycheck" then					   
+		OpenPaycheckMenu() 								  
+	end													 
 end
+
+RegisterNetEvent('dx-paycheck:Menu')
+AddEventHandler('dx-paycheck:Menu',function()
+	OpenPaycheckMenu()
+end)
 
 Citizen.CreateThread(function()
 	if Config.BlipActive then
 		for k,v in ipairs(Config.BlipCoords) do
 		local blip = AddBlipForCoord(v.x, v.y, v.z)
-		SetBlipSprite(blip, Config.BlipID)
+		SetBlipSprite(blip, v.BlipID)
 		SetBlipDisplay(blip, 4)
-		SetBlipScale(blip, 0.5)
-		SetBlipColour(blip, 2)
+		SetBlipScale(blip, v.BlipScale)
+		SetBlipColour(blip, v.BlipColor)
 		SetBlipAsShortRange(blip, true)
 		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString(Config.BlipName)
+		AddTextComponentString(v.BlipName)
 		EndTextCommandSetBlipName(blip)
 		end
 	end
@@ -88,43 +116,44 @@ function CreatingPed(hash, coords, heading, animDict, animName)
 end
 
 function OpenPaycheckMenu()
-	local paycheckMenu = {
-        {
-            id = 1,
-            header = Config.Header,
-            txt = Config.Text 
-        },
-        {
-            id = 2,
-            header = Config.WithdrawAll,
-            txt = Config.WithdrawText,
-            params = {
-                event = 'dx-paycheck:withdrawAll',
-            }
-        },
-		{
-            id = 3,
-            header = Config.EnterAmount,
-            txt = Config.AmountText,
-            params = {
-                event = 'dx-paycheck:enterAmount',
-            }
-        },
-    }
-    exports['zf_context']:openMenu(paycheckMenu)
+		local paycheckMenu = {   -- ZF_Context Menus for a cleaner look!
+        	{
+            	id = 1,
+            	header = Config.Header,
+            	txt = Config.Text -- Working on getting it to pull paycheckdata to show how much you have!!
+        	},
+        	{
+            	id = 2,
+            	header = Config.WithdrawAll,
+            	txt = Config.WithdrawText,
+            	params = {
+                	event = 'dx-paycheck:withdrawAll',
+            	}
+        	},
+			{
+            	id = 3,
+            	header = Config.EnterAmount,
+            	txt = Config.AmountText,
+            	params = {
+                	event = 'dx-paycheck:enterAmount',
+            	}
+        	},
+    	}
+    	exports['zf_context']:openMenu(paycheckMenu)
 end
 
 RegisterNetEvent('dx-paycheck:withdrawAll')
 AddEventHandler('dx-paycheck:withdrawAll', function()
 	local disableControls = {30,31,32,33,34,35,18}
-		exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls)
+		exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls) -- progbars are a free ModFreakZ Script available at https://modit.store/products/mf-progress-bars?variant=31748599185485
 		Citizen.Wait(5000)
 		TriggerServerEvent('dx-paycheck:Payout')
+	end
 end)
 
 RegisterNetEvent('dx-paycheck:enterAmount')
 AddEventHandler('dx-paycheck:enterAmount', function()
-	local dialog = exports['zf_dialog']:DialogInput({
+	local dialog = exports['zf_dialog']:DialogInput({  -- ZF_Dialog for entering a said amount to withdraw!
 		header = "City Hall", 
 		rows = {
 			{
@@ -140,7 +169,7 @@ AddEventHandler('dx-paycheck:enterAmount', function()
 		else
 			local count = tonumber(dialog[1].input)
 			local disableControls = {30,31,32,33,34,35,18}
-				exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls)
+				exports['progbars']:StartProg(5000, 'Cashing Out...',disableControls) -- progbars are a free ModFreakZ Script available at https://modit.store/products/mf-progress-bars?variant=31748599185485
 				Citizen.Wait(5000)
 				TriggerServerEvent('dx-paycheck:withdrawMoney', count)
 		end

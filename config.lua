@@ -29,6 +29,8 @@ Config.NPCS =  {
     -- }
 }
 
+Config.BlipActive = true
+
 Config.Blips = {
     {title="Cityhall", colour=5, id=525, x = -552.86126708984, y = -191.00524902344, z = 37.219673156738},
 }
