@@ -39,7 +39,9 @@ Added ZF Context and Dialog! Config options for the text to set anyway you want 
 FiveM-Target support look in client.lua for more info on how to use or how to use BT-Target or QTarget!
 added `exports['dx-paycheck']:OpenPaycheckMenu()` to add to any script where you would like people to be able to open their checks! think PD or EMS
 
-## For ES EXTENDED Paychecks! 
+## For ES EXTENDED Paychecks! ##
+
+##
 ESX.StartPayCheck = function()
 	function payCheck()
 		local xPlayers = ESX.GetPlayers()
@@ -89,3 +91,4 @@ ESX.StartPayCheck = function()
 
 	SetTimeout(Config.PaycheckInterval, payCheck)
 end
+##
