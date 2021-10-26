@@ -72,13 +72,15 @@ AddEventHandler('dx-paycheck:withdrawMoney', function(value)
 					else
 						xPlayer.addAccountMoney('bank', value)
 					end
-					local msg1 = 'You recollect '..value..'$'
+					local msg1 = 'You collected '..value..'$'
 					local type = 'success'
 					TriggerClientEvent('dx-paycheck:notification',_source,msg1,type)
+					sendCollectDiscord(_source,name,msg1,type)  -- will show in discord the (msg1) from above in discord E.X.("You collected $1000")
 				else
-					local msg2 = 'You dont have enough money to collect that.'
+					local msg2 = 'You dont have enough money to withdraw $'..value..': You Have $'..paycheckbd..'!'
 					local type2 = 'error'
 					TriggerClientEvent('dx-paycheck:notification',_source,msg2,type2)
+					sendCollectDiscord(_source,name,msg2,type2)  -- will show in discord the (msg2) from above in discord E.X.("You dont have enough money to withdraw $10000: You Have $4000!")
 				end
 			end
 		end)
@@ -127,9 +129,10 @@ AddEventHandler("dx-paycheck:Payout", function()
 					else
 						xPlayer.addAccountMoney('bank', paycheckbd)
 					end
-					local msg3 = 'All your paycheck its '..paycheckbd..'$'
+					local msg3 = 'Your paycheck Totaled: $'..paycheckbd..'!'
 					local type3 = 'success'
 					TriggerClientEvent('dx-paycheck:notification',_source,msg3,type3)
+					sendCollectDiscord(_source,name,msg3,type3)
 				else
 					local msg4 = 'You dont have anything to collect.'
 					local type4 = 'error'
@@ -140,3 +143,22 @@ AddEventHandler("dx-paycheck:Payout", function()
 		print(('Someone is trying to do something shady. [DX-PAYCHECK]'):format(xPlayer.identifier))
 	end
 end)
+
+sendCollectDiscord = function(color, name, message, footer)			--Added webhooks to track the collection or (lack of collection) in discord for easier monitoring for Admins
+	local embed = {
+		  {
+			  ["color"] = 3085967,
+			  ["title"] = "**".. name .."**",
+			  ["description"] = message,
+			  ["footer"] = {
+				  ["text"] = footer,
+			  },
+			  ["author"] = {
+				["name"] = 'Made by | SickJuggalo666',
+				['icon_url'] = 'https://i.imgur.com/arJnggZ.png'
+			  }
+		  }
+	  }
+  
+	PerformHttpRequest(Config.Discord_url, function(err, text, headers) end, 'POST', json.encode({username = name, embeds = embed}), { ['Content-Type'] = 'application/json' })
+end

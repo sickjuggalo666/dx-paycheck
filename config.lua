@@ -6,7 +6,6 @@ Config.Timeout = 5000 -- Timeout for the citizen, briefly, 5 secs.
 Config.Target = 'qtarget' -- Config your exports target (bt-target or qtarget)
 
 Config.Header = "City Hall"
-Config.Text = "Get Paycheck!"
 Config.WithdrawAll = "Withdraw All?"
 Config.WithdrawText = "Collect all the paycheck"
 Config.EnterAmount = "Withdraw Amount?"
