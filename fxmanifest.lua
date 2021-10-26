@@ -13,5 +13,5 @@ client_scripts {
 }
 
 exports {
-    'OpenPaycheckMenu()' 
+    'OpenPaycheckMenu' -- I made a mistake on the Export! fixed and tested working!
 }

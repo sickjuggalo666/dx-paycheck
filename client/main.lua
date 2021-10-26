@@ -13,7 +13,7 @@ end)
 
 --- IF NOT USING BT-TARGET OR QTARGET HASH THIS SECTION and unhash the section after it!
 
---[[Citizen.CreateThread(function()
+Citizen.CreateThread(function()
 	local PedsTarget = {}
 	for k,v in pairs (Config.NPCS) do
 		PedsTarget = {v.model}
@@ -30,10 +30,11 @@ end)
 		job = {"all"},
 		distance = 3.5
 	})
-end)]]
+end)
 
-		--- FIVEM TARGET HERE!!!! Make sure to hash out this WHOLE section if you with to use Bt-target or Qtarget!
+		--- FIVEM TARGET HERE!!!! Make sure to unhash this WHOLE section if you wish to use FiveM-Target!
 
+--[[
 Citizen.CreateThread(function()				
 
 	for k,v in pairs(Config.NPCS) do												  
@@ -41,7 +42,7 @@ Citizen.CreateThread(function()
 			name = "payroll",
 			label = "Payroll",
 			icon = "fas fa-car",
-			model = GetHashKey(v.model),  --- currently only allows for the one model.. BUT i am working out ways to pull more than ONE hash!
+			model = GetHashKey(v.model),  --- EDIT: i got it to find more models than just the ONE!!!
 			interactDist = 2.0,
 			onInteract = payCheck,
 			options = {
@@ -60,7 +61,7 @@ payCheck = function(targetname,optionName,vars,entityhit)
 		OpenPaycheckMenu() 								  
 	end													 
 end													
-				--]]
+--]]
 				
 RegisterNetEvent('dx-paycheck:Menu')
 AddEventHandler('dx-paycheck:Menu',function()
@@ -120,6 +121,7 @@ function CreatingPed(hash, coords, heading, animDict, animName)
 end
 				
 function OpenPaycheckMenu()
+	ESX.UI.Menu.CloseAll()  -- added this for the export! incase you have it set up in a ESX menu it will close them while opening this!!
 	ESX.TriggerServerCallback('dx-paycheck:server:GetDataMoney', function(count)
 		paycheckdata = json.decode(count)
 			local paycheckMenu = {   -- ZF_Context Menus for a cleaner look!

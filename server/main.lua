@@ -134,7 +134,7 @@ AddEventHandler("dx-paycheck:Payout", function()
 					TriggerClientEvent('dx-paycheck:notification',_source,msg3,type3)
 					sendCollectDiscord(_source,name,msg3,type3)
 				else
-					local msg4 = 'You dont have anything to collect.'
+					local msg4 = 'You don\'t have anything to collect.'
 					local type4 = 'error'
 					TriggerClientEvent('dx-paycheck:notification',_source,msg4,type4)
 				end

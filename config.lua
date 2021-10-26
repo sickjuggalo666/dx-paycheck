@@ -3,7 +3,7 @@ Config.ReceiveInCash = true -- If its in true, you'll recieve it on cash (wallet
 Config.UseEsExtendedType = true -- IF true, enable the trigger so you can place it in your es_extended, false it will disable it
 Config.WithdrawQuantity = true
 Config.Timeout = 5000 -- Timeout for the citizen, briefly, 5 secs.
-Config.Target = 'qtarget' -- Config your exports target (bt-target or qtarget)
+Config.Target = 'qtarget' -- Config your exports target (bt-target or qtarget) -- suppors FiveM-Target as well!! Check Client.lua for more info!
 
 Config.Header = "City Hall"
 Config.WithdrawAll = "Withdraw All?"
