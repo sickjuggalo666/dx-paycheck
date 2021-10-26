@@ -33,7 +33,7 @@ Config.NPCS =  {
 Config.BlipActive = true
 
 Config.Blips = {
-    {title="Cityhall", colour=5, id=525, x = -552.86126708984, y = -191.00524902344, z = 37.219673156738},
+    {BlipName = "Paycheck PickUp", BlipID = 525, BlipScale = 0.5, x = -552.86126708984, y = -191.00524902344, z = 37.219673156738, BlipColor = 5}, -- messed up blip. fixed now i apologize
 }
 
 --	Your Notification System
