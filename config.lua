@@ -11,6 +11,8 @@ Config.WithdrawText = "Collect all the paycheck"
 Config.EnterAmount = "Withdraw Amount?"
 Config.AmountText = "Enter a Select amount"
 
+Config.Discord_url = ""  --- I spaced out adding this config option for webhooks!! my mistake
+
 Config.NPCS =  {
     {
         model = "cs_bankman",
